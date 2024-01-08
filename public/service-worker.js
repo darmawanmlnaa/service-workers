@@ -32,13 +32,20 @@ const fetchEvent = () => {
 };
 fetchEvent();
 
-self.addEventListener('beforeinstallprompt', event => { 
-  event.preventDefault(); 
-  const installButton = document.getElementById('install-button'); 
-  if (installButton) { 
-    installButton.style.display = 'block'; 
-    installButton.addEventListener('click', () => { 
-      event.prompt(); 
-    }); 
-  } 
+self.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  const installButton = document.getElementById('install-button');
+  if (installButton) {
+    installButton.style.display = 'block';
+    installButton.addEventListener('click', () => {
+      event.prompt();
+      event.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+      });
+    });
+  }
 });
