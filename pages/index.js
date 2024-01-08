@@ -8,8 +8,11 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
+
     const handleBeforeInstallPrompt = (event) => {
       // Prevent the default behavior
       event.preventDefault();
@@ -26,20 +29,23 @@ export default function Home() {
 
   const handleInstallClick = () => {
     if (deferredPrompt) {
-      // Show the install prompt
-      deferredPrompt.prompt();
+      // Show the install prompt for non-iOS devices
+      if (!isIOS) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          } else {
+            console.log('User dismissed the install prompt');
+          }
 
-      // Wait for the user to make a choice
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the install prompt');
-        } else {
-          console.log('User dismissed the install prompt');
-        }
-
-        // Reset the deferredPrompt variable
-        setDeferredPrompt(null);
-      });
+          // Reset the deferredPrompt variable
+          setDeferredPrompt(null);
+        });
+      } else {
+        // Display a message for iOS users
+        alert('To install the app, open the Safari share menu and choose "Add to Home Screen."');
+      }
     }
   };
 
