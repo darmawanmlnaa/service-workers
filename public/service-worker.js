@@ -31,3 +31,14 @@ const fetchEvent = () => {
   });
 };
 fetchEvent();
+
+self.addEventListener('beforeinstallprompt', event => { 
+  event.preventDefault(); 
+  const installButton = document.getElementById('install-button'); 
+  if (installButton) { 
+    installButton.style.display = 'block'; 
+    installButton.addEventListener('click', () => { 
+      event.prompt(); 
+    }); 
+  } 
+});
